@@ -58,4 +58,5 @@ target/
 # Added by JG
 .DS_Store
 data/*
+data/README.md
 test.py
