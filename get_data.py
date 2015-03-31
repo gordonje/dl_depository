@@ -1,6 +1,7 @@
 from datetime import datetime
 from requests import get
 import os
+from chardet import detect
 
 start_time = datetime.now()
 print 'Started at ' + str(start_time)
@@ -26,15 +27,24 @@ with open('data_urls.txt', 'rU') as in_file:
 
 			print '   downloading: {} ({})...'.format(file_name, datetime.now() - start_time)
 
-			response = get(link, stream=True)
+			response = get(link.strip(), stream=True)
+			
+			print "Requests says this is {}".format(response.encoding)
 
 			with open('data/' + file_name, 'wb') as f:
 				for chunk in response.iter_content(chunk_size=1024):
 					if chunk: # filter out keep-alive new chunks
+						pos_encoding = detect(chunk) # for testing chardet, remove later
+						print pos_encoding # for testing chardet, remove later
+						if pos_encoding['encoding'] != 'ascii': # for testing chardet, remove later
+							print chunk # for testing chardet, remove later
 						f.write(chunk)
 						f.flush()
 
 			num_files_downloaded += 1
 
-# maybe how long it took to print statement
-print "Finished. Found {0} files, downloaded {1} (see data/ directory).".format(num_files_found, num_files_downloaded)
+print "Found {0} files, downloaded {1}, in {2} (see data/ directory).".format(
+																		  num_files_found
+																		, num_files_downloaded
+																		, utils.time_diff(datetime.now() - start_time)
+																	)
